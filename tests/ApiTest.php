@@ -18,7 +18,7 @@ class ApiTest extends TestCase {
         $this->assertEquals(count($test->getResults()), 13);                
         $this->assertEquals($test->getResults()[0], 0.60);                
         $this->assertEquals($test->getResults()[1], 3.00);                
-        $this->assertEquals($test->getResults()[12], 8611.41);
+        $this->assertEquals($test->getResults()[12], 8612.00);
 
     }
     

@@ -87,18 +87,45 @@ class Transaction
                 $commissionFee = $this->computeCashOutFee();
             }
 
-            $test = is_float($commissionFee + 0);
+            $whole = floor($commissionFee);      // 1
+            $fraction = ($commissionFee - $whole) * 100; // .25
 
+            if($whole > 0)
+            {
+                if($fraction > 0)
+                {
+                    $commissionFee = $whole + 1;
+                }
+                else
+                {
+                    $commissionFee = $whole;
+                }
+            }
+            else
+            {                
+                (int) $n = substr((string)$fraction, 1, 1);
+                
+                if($n > 0)
+                {
+                    $commissionFee = $commissionFee + 0.1;
+                }
+                else
+                {
+                    $commissionFee = $commissionFee;
+                }
+            }
+            
+            $test = is_float($commissionFee + 0);
+            
             if($test > 0)
             {
-                $price = round($commissionFee, 3);            
-                $this->results[] = number_format((float)$price, 2, '.', '');                    
-                //die(  round( $this->results[0], 10));
-            }            
-            else
-            {               
-               $this->results[] = $commissionFee;
+            $this->results[] = number_format(round($commissionFee, 3), 2, '.', '');                    ;
             }
+            else
+            {
+                $this->results[] = $commissionFee;
+            }
+            
         }
      
     }
