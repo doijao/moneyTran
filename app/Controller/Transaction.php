@@ -91,12 +91,17 @@ class Transaction
      
     }    
 
+    /**
+     * getting final result
+     */
     public function getResults() : array
     {        
         return $this->results;        
     }
 
-
+    /**
+     * log each transaction for historical reference
+     */
     private function setLog() : void
     {     
         $this->log[$this->uid][] = array (
@@ -107,7 +112,9 @@ class Transaction
             'ocurrency' =>  $this->ocurrency);
     }
 
-
+    /**
+     * check if both dates are in the same week
+     */
     private function isThesameWeek( string $day1, string $day2) : bool
     {
         $d1 = strtotime($day1);
@@ -124,7 +131,9 @@ class Transaction
         return $d1w === $d2w;
     }
 
-
+    /**
+     * convert currency to EURO
+     */
     private function toEuro($currency, $amount) : float
     {
         if(!$this->currencies[$currency])        
@@ -133,7 +142,9 @@ class Transaction
         return ($amount / $this->currencies[$currency]);
     }
 
-
+    /**
+     * convert EURO currency to specified currency
+     */
     private function fromEuro($currency, $amount) : float
     {
         if(!$this->currencies[$currency])        
@@ -142,7 +153,9 @@ class Transaction
         return ($amount * $this->currencies[$currency]);
     }
 
-    
+    /**
+     * return calculated Cahs-In fee
+     */
     private function computeCashInFee() : float
     {
         $fee = $this->oamount * $this->cashInFee;
@@ -153,6 +166,9 @@ class Transaction
         return $fee;
     }
 
+    /**
+     * return calculated Cash-Out fee
+     */
     private function computeCashOutFee()
     {        
         if($this->utype == 'natural')
@@ -228,12 +244,17 @@ class Transaction
         return $fee;
 
     }
-
+    
+    /**
+     * return rounded smallest currency
+     */
     private function roundResult($commissionFee) 
     {
         //float 8611.41
         $whole = floor($commissionFee);      // 8611
         $fraction = ($commissionFee - $whole) * 100; // 41
+
+        $commissionFee = $commissionFee;
 
         if($whole > 0)
         {
@@ -245,20 +266,7 @@ class Transaction
             {
                 $commissionFee = $whole;
             }
-        }
-        else
-        {                
-            (int) $n = substr((string)$fraction, 1, 1);
-            
-            if($n > 0)
-            {
-                $commissionFee = $commissionFee + 0.1;
-            }
-            else
-            {
-                $commissionFee = $commissionFee;
-            }
-        }
+        }        
         
         $test = is_float($this->oamount + 0);
         
