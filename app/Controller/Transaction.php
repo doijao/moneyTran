@@ -65,8 +65,7 @@ class Transaction
     private $results;
 
     public function __construct(array $transactions)
-    {          
-        
+    {   
         foreach($transactions as $transaction)
         {
             $this->odate = $transaction[0];
@@ -86,50 +85,11 @@ class Transaction
             {
                 $commissionFee = $this->computeCashOutFee();
             }
-
-            $whole = floor($commissionFee);      // 1
-            $fraction = ($commissionFee - $whole) * 100; // .25
-
-            if($whole > 0)
-            {
-                if($fraction > 0)
-                {
-                    $commissionFee = $whole + 1;
-                }
-                else
-                {
-                    $commissionFee = $whole;
-                }
-            }
-            else
-            {                
-                (int) $n = substr((string)$fraction, 1, 1);
-                
-                if($n > 0)
-                {
-                    $commissionFee = $commissionFee + 0.1;
-                }
-                else
-                {
-                    $commissionFee = $commissionFee;
-                }
-            }
             
-            $test = is_float($commissionFee + 0);
-            
-            if($test > 0)
-            {
-            $this->results[] = number_format(round($commissionFee, 3), 2, '.', '');                    ;
-            }
-            else
-            {
-                $this->results[] = $commissionFee;
-            }
-            
+            $this->results[] = $this->roundResult($commissionFee);
         }
      
-    }
-
+    }    
 
     public function getResults() : array
     {        
@@ -267,6 +227,50 @@ class Transaction
         
         return $fee;
 
+    }
+
+    private function roundResult($commissionFee) 
+    {
+        //float 8611.41
+        $whole = floor($commissionFee);      // 8611
+        $fraction = ($commissionFee - $whole) * 100; // 41
+
+        if($whole > 0)
+        {
+            if($fraction > 0)
+            {
+                $commissionFee = $whole + 1;
+            }
+            else
+            {
+                $commissionFee = $whole;
+            }
+        }
+        else
+        {                
+            (int) $n = substr((string)$fraction, 1, 1);
+            
+            if($n > 0)
+            {
+                $commissionFee = $commissionFee + 0.1;
+            }
+            else
+            {
+                $commissionFee = $commissionFee;
+            }
+        }
+        
+        $test = is_float($this->oamount + 0);
+        
+        if($test > 0)
+        {
+            return number_format(round($commissionFee, 3), 2, '.', '');                    ;
+        }
+        else
+        {
+            return $commissionFee;
+        }
+        
     }
 
 }
